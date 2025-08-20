@@ -7,7 +7,7 @@ def get_file_content(working_directory, file_path):
     abs_target_file = os.path.abspath(full_path)
 
     if not abs_target_file.startswith(abs_working_dir): return f'Error: Cannot list "{file_path}" as it is outside the permitted working directory'
-    if not os.path.isfile(abs_target_file): return f'Error: "{file_path}" is not a directory'
+    if not os.path.isfile(abs_target_file): return f'Error: "{file_path}" is not a regular file'
 
     try:
         with open(abs_target_file, "r") as f:
