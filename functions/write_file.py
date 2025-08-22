@@ -31,11 +31,11 @@ schema_write_file = types.FunctionDeclaration(
             properties={
                 "file_path": types.Schema(
                     type=types.Type.STRING,
-                    description="The path to the file content, relative to the working directory."
+                    description="The path to the file content, relative to the working directory. If not provided do nothing" 
                 ),
                 "content": types.Schema(
                     type=types.Type.STRING,
-                    description="Content to write or overwrite in the specified file path"
+                    description="Content to write or overwrite in the specified file path. If don't change anything"
                 )
             }
         )
