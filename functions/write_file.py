@@ -15,13 +15,14 @@ def write_file(working_directory, file_path, content):
         except Exception as e:
             return f"Error: creating directory: {e}"
     
-    if os.path.exists(abs_target_file):
-        try:
-            with open(full_path, "w") as f:
-                f.write(content)
-            return f'Successfully wrote to "{file_path} ({len(content)} characters written)'
-        except Exception as e:
-            return f"Error writing content to file: {e}"
+    if os.path.exists(abs_target_file) and os.path.isdir(abs_target_file):
+        return f'Error: "{file_path}" is a directory, not a file'
+    try:
+        with open(full_path, "w") as f:
+            f.write(content)
+        return f'Successfully wrote to "{file_path} ({len(content)} characters written)'
+    except Exception as e:
+        return f"Error writing content to file: {e}"
         
 schema_write_file = types.FunctionDeclaration(
         name="write_file",
@@ -31,7 +32,7 @@ schema_write_file = types.FunctionDeclaration(
             properties={
                 "file_path": types.Schema(
                     type=types.Type.STRING,
-                    description="The path to the file content, relative to the working directory. If not provided do nothing" 
+                    description="The path to the file content, relative to the working directory. If doesn't exist, make the file" 
                 ),
                 "content": types.Schema(
                     type=types.Type.STRING,
