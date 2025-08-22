@@ -33,10 +33,22 @@ def main():
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
 
-    generate_content(client, messages, verbose)
+    
+    while len(messages) <= 20:
+        try:
+            result = generate_content(client, messages, verbose)
+            if result:
+                print(result)
+                break
+
+        except Exception as e:
+            print(f"Error: {e}")
+            break
+    
 
 
 def generate_content(client, messages, verbose):
+
     response = client.models.generate_content(
         model="gemini-2.0-flash-001",
         contents=messages,
@@ -44,6 +56,11 @@ def generate_content(client, messages, verbose):
             tools=[available_functions], system_instruction=system_prompt
         ),
     )
+
+    candidate_list = response.candidates
+    for candidate in candidate_list:
+        messages.append(candidate.content)
+
     if verbose:
         print("Prompt tokens:", response.usage_metadata.prompt_token_count)
         print("Response tokens:", response.usage_metadata.candidates_token_count)
@@ -65,6 +82,7 @@ def generate_content(client, messages, verbose):
 
     if not function_responses:
         raise Exception("no function responses generated, exiting.")
+    messages.append(types.Content(role="user", parts=function_responses))
 
 
 if __name__ == "__main__":
