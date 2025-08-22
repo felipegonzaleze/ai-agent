@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from functions.get_files_info import schema_get_files_info
-from config import system_prompt
+from config.config import system_prompt
 
 def main():
     load_dotenv()
@@ -29,15 +29,17 @@ def main():
             ))
 
     if len(sys.argv) > 2 and sys.argv[2] == "--verbose":
-        print(f"Response: response.text")
+        print(f"Response: {response.text}")
         print(f"User prompt: {sys.argv[1]}")
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
     else:
-        print(response.text)
-
+        if response.function_calls:
+            called_functions = response.function_calls
+            print(called_functions)
+            for func in called_functions:
+                print(f"Calling function: {str(func.name)}({str(func.args)})")
+            print(response.text)
 
 if __name__ == "__main__":
     main()
-
-# Desgaste hueso | algo stock
