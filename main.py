@@ -7,6 +7,7 @@ from functions.get_files_info import schema_get_files_info
 from functions.get_file_content import schema_get_file_content
 from functions.run_python_file import schema_run_python_file
 from functions.write_file import schema_write_file
+from functions.call_function import call_function
 from config.config import system_prompt
 
 def main():
@@ -35,17 +36,24 @@ def main():
             ))
 
     if len(sys.argv) > 2 and sys.argv[2] == "--verbose":
-        print(f"Response: {response.text}")
-        print(f"User prompt: {sys.argv[1]}")
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+        if response.function_calls:
+            called_functions = response.function_calls
+            for func in called_functions:
+                try:
+                    call_func = call_function(func, True)
+                    print(f"-> {call_func.parts[0].function_response.response}")
+                except Exception as e:
+                    print(f"Error: No response : {e}")
     else:
         if response.function_calls:
             called_functions = response.function_calls
-            print(called_functions)
             for func in called_functions:
                 print(f"Calling function: {str(func.name)}({str(func.args)})")
-            print(response.text)
+                try:
+                    call_func = call_function(func)
+                    print(f"-> {call_func.parts[0].function_response.response}")
+                except Exception as e:
+                    print(f"Error: No response : {e}")
 
 if __name__ == "__main__":
     main()
