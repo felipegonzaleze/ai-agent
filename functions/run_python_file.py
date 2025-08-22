@@ -34,7 +34,7 @@ def run_python_file(working_directory, file_path, args=[]):
     except Exception as e:
         return f"Error: executing Python file: {e}"
 
-schema_get_files_info = types.FunctionDeclaration(
+schema_run_python_file = types.FunctionDeclaration(
         name="run_python_file",
         description="Runs the python file in the specified file path.",
         parameters=types.Schema(
